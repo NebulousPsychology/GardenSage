@@ -1,0 +1,21 @@
+version: docker/dockerfile:1.7-labs
+services:
+  recorder:
+    environment:
+      - ASPNETCORE_HTTP_PORTS=5123
+      # - ASPNETCORE_HTTPS_PORTS=7094
+    ports:
+      # props/launchsettings
+      # iis settings
+      # - 22845
+      # - 44398
+      # swagger https(part1)
+      - 7094:7094
+      # swagger http
+      - 5123:5123
+    build:
+      context: ..
+      dockerfile: GardenSage.Recorder/Dockerfile
+    # volumes:
+    #   - 
+  # 
