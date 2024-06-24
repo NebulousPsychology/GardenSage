@@ -1,3 +1,5 @@
+using System.Device.Gpio.Drivers;
+
 using NLog;
 using NLog.Extensions.Logging;
 using NLog.Web;
@@ -17,8 +19,11 @@ builder.Logging.AddNLogWeb(LogManager.Configuration);
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
 logger.Info("service building");
+logger.Info(builder.Configuration.GetDebugView());
 
+builder.Services.AddScoped<Recorder>();
 var app = builder.Build();
+
 var log = app.Services.GetRequiredService<ILogger<Program>>();
 log.LogInformation("Starting ups");
 
@@ -31,14 +36,26 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.MapGet("/weatherforecast", getforecast).WithName("GetWeatherForecast").WithOpenApi();
+// get some info about the gpio
+app.MapGet("/gpio_info", GpioInfo).WithName("GetGpioInfo").WithOpenApi();
+// manually add a state change
+app.MapPost("/facility_state", handler: RegisterFacilityState).WithName("NewFacilityState").WithOpenApi();
+// regularly sense temperature pair
+app.MapPost("/sense_temperature", handler: SenseTemperature).WithName("NewSensorEvent").WithOpenApi();
 
-app.MapGet("/weatherforecast", () =>
+
+app.Run();
+log.LogInformation("After App Run");
+
+#region API Methods
+static async Task<IResult> getforecast(ILogger<Program> log)
 {
     log.LogInformation("forecasting");
+    var summaries = new[]
+    {
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        };
     var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
@@ -47,15 +64,52 @@ app.MapGet("/weatherforecast", () =>
             summaries[Random.Shared.Next(summaries.Length)]
         ))
         .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    return TypedResults.Ok(forecast);
+}
 
-app.Run();
+static async Task<IResult> GpioInfo(HttpContext context, ILogger<Program> logger)
+{
+#pragma warning disable SDGPIO0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+    try
+    {
+        System.Device.Gpio.GpioController ctrl = new();
+        var info = ctrl.QueryComponentInformation();
+        logger.LogInformation("requested gpio info: {i}", info);
+        return TypedResults.Ok(info);
+    }
+    catch (GpiodException unsupported)
+    {
+        return Results.Problem(detail: unsupported.Message, statusCode: 500);
+    }
+#pragma warning restore SDGPIO0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+}
 
-log.LogInformation("Running ups");
+static async Task<IResult> RegisterFacilityState(HttpContext context, FacilityState state, ILogger<Program> logger)
+{
+    logger.LogInformation("RegisterFacilityState: {state}", state);
+    return TypedResults.Ok(new { DateTimeOffset.Now, state });
+}
+
+static async Task<IResult> SenseTemperature(HttpContext context, ILogger<Program> logger)
+{
+    var state = new
+    {
+        inside = Random.Shared.Next(50, 90),
+        outside = Random.Shared.Next(50, 90)
+    };
+    logger.LogInformation("SenseTemperature: {state}", state);
+    return TypedResults.Ok(new { DateTimeOffset.Now, state });
+}
+#endregion
+
+#region Model records
+record FacilityState(bool AC, bool Furnace, bool Vent)
+{
+
+}
+
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+#endregion
