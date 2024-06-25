@@ -13,6 +13,12 @@ services:
       - 7094:7094
       # swagger http
       - 5123:5123
+    #privileged: true
+    # devices:
+    #   - /dev/gpiomem
+    # volumes:
+    #   - /sys/class/gpio:/sys/class/gpio
+    #   - /sys:/sys
     build:
       context: ..
       dockerfile: GardenSage.Recorder/Dockerfile

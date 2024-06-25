@@ -4,7 +4,7 @@ using NLog;
 using NLog.Extensions.Logging;
 using NLog.Web;
 
-using Thermosensor;
+using GardenSage.Recorder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,47 +69,58 @@ static async Task<IResult> getforecast(ILogger<Program> log)
 
 static async Task<IResult> GpioInfo(HttpContext context, ILogger<Program> logger)
 {
-#pragma warning disable SDGPIO0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-    try
+    if (Recorder.TryGetHardwareInfo(out var info, out var problem))
     {
-        System.Device.Gpio.GpioController ctrl = new();
-        var info = ctrl.QueryComponentInformation();
         logger.LogInformation("requested gpio info: {i}", info);
         return TypedResults.Ok(info);
     }
-    catch (GpiodException unsupported)
+    else
     {
-        return Results.Problem(detail: unsupported.Message, statusCode: 500);
+        return Results.Problem(detail: problem?.Message ?? "Unknown message", statusCode: 500);
     }
-#pragma warning restore SDGPIO0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 }
 
-static async Task<IResult> RegisterFacilityState(HttpContext context, FacilityState state, ILogger<Program> logger)
+static async Task<IResult> RegisterFacilityState(HttpContext context, FacilityState state, Recorder recorder)
 {
-    logger.LogInformation("RegisterFacilityState: {state}", state);
-    return TypedResults.Ok(new { DateTimeOffset.Now, state });
-}
-
-static async Task<IResult> SenseTemperature(HttpContext context, ILogger<Program> logger)
-{
-    var state = new
+    try
     {
-        inside = Random.Shared.Next(50, 90),
-        outside = Random.Shared.Next(50, 90)
-    };
-    logger.LogInformation("SenseTemperature: {state}", state);
-    return TypedResults.Ok(new { DateTimeOffset.Now, state });
+        recorder.AddFacilityState(state);
+        return TypedResults.Ok(new { DateTimeOffset.Now, state });
+    }
+    catch (Exception problem)
+    {
+        return Results.Problem(detail: problem?.Message ?? "Unknown message", statusCode: 500);
+    }
+}
+
+static async Task<IResult> SenseTemperature(HttpContext context, Recorder recorder)
+{
+    if (Recorder.HasSensorHardware)
+    {
+        var tp = recorder.GetTemperaturePair();
+        return TypedResults.Ok(tp);
+    }
+    else
+    {
+        return TypedResults.Problem(statusCode: 500);
+    }
 }
 #endregion
 
 #region Model records
-record FacilityState(bool AC, bool Furnace, bool Vent)
+namespace GardenSage.Recorder
 {
+    public record TemperatureDifference(DateTimeOffset Time, double Indoor, double Outdoor)
+    {
+    }
 
-}
+    public record FacilityState(bool AC, bool Furnace, bool Vent)
+    {
+    }
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+    {
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
 }
 #endregion
