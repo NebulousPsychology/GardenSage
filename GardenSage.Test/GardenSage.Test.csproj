@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- <TargetFramework>net8.0</TargetFramework> -->
+    <!-- <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable> -->
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="nsubstitute" Version="5.1.0" />
+    <!-- <PackageReference Include="Moq" Version="4.20.70" /> -->
+    <!-- moq 4.20.0 transgressed; "corrected" in 4.20.2 -->
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Condition="$([MSBuild]::IsOSPlatform('windows'))"  --> <!-- USE_OPENMETEO_API -->
+    <PackageReference Include="openmeteo" Version="1.0.0" />
+    <!-- <PackageReference Include="openmeteo_sdk" Version="1.11.4" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GardenSage.Common\GardenSage.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="../appsettings*.json" CopyToOutputDirectory="Always" /> 
+    <Content Include="./data/*.json" CopyToOutputDirectory="PreserveNewest" /> 
+  </ItemGroup>
+
+</Project>
