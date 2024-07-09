@@ -6,6 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:8.0-alpine</ContainerBaseImage>
+    <!-- <RuntimeIdentifier>linux-x64</RuntimeIdentifier> -->
+    <RuntimeIdentifier>linux-arm64</RuntimeIdentifier>
+    <!-- (linux/arm64/v8) -->
+  </PropertyGroup>
+
   <ItemGroup>
     <!-- <PackageReference Include="Iot.Device.Bindings" Version="3.2.0" /> -->
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
