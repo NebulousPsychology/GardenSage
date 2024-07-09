@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+    <PropertyGroup>
+        <TargetFramework >net8.0</TargetFramework>
+        <!-- <TargetFramework Condition="$([MSBuild]::IsOSPlatform('windows'))">net8.0-windows10.0.19041.0</TargetFramework> -->
+        <TargetFrameworkVersion>net8.0</TargetFrameworkVersion>
+        <!-- <TargetFrameworks>$(TargetFramework)</TargetFrameworks> -->
+        <LangVersion>preview</LangVersion>
+        <!-- <RunSettingsFilePath>$(SolutionDir)\.runsettings</RunSettingsFilePath> -->
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <PropertyGroup>
+    <!-- <Platforms>x64</Platforms> -->
+    <!-- <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers> -->
+    </PropertyGroup>
+    <Target Name="EmitCustomMessage" AfterTargets="Build">
+        <Message Importance="High" Text="The solution has completed the Build target" />
+    </Target>
+</Project>
+<!-- MSBuild topic: Directory.Build.{props|targets}  |  Microsoft.NuGet.targets -->
+<!-- https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2019#import-order -->
+<!-- https://learn.microsoft.com/en-us/visualstudio/msbuild/project-element-msbuild?source=recommendations&view=vs-2022 -->

@@ -1,0 +1,24 @@
+tasks:
+  rhodes:
+    spring:
+      start: may
+      end: August
+      after_observing: after flowering
+      action:
+        - deadhead,
+        - remove diseased/damaged branches
+    summer:
+      between: [june, september]
+      avoid: HEAVY pruning.
+      action:
+        - pinch back the tips of new shoots to encourage bushiness
+        - light pruning to shape
+    fall:
+      avoid: HEAVY, it stimulates new growth tat won't harden
+      action:
+        - remove dead/diseased
+  roses:
+    # https://www.bhg.com/gardening/flowers/roses/tips-for-pruning-roses/
+    fall:
+     action:
+      - remove fallen leaves
