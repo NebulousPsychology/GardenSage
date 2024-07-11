@@ -27,3 +27,17 @@ services:
     # volumes:
     #   -
   #
+  homeassistant:
+    container_name: homeassistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    volumes:
+      # MUST RUN LINUX OR WSL
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro # optional; req for bluetooth
+      # - ./wslconf:/config
+    privileged: true
+    environment:
+      - TZ=America/Los_Angeles
+    ports:
+      - 8123:8123
+    # host.docker.internal:8123
