@@ -1,5 +1,7 @@
 # Recorder
 
+## All-in-one Service
+
 ```mermaid
 graph TB
 
@@ -32,12 +34,19 @@ RecordState -->RecordTemperature
 
 ## homeassistant peer
 
+- wired internet ()
+- broadcast AP for smarthome-only traffic from devices
+
 ```mermaid
-graph LR
+graph TB
 
 openmeteo
 
 subgraph device
+    usb[[con:usb]]
+    eth0[[con:eth0]]
+    wlanb[[con:wlan-broadcast]]
+    bluetooth[[con:bluetooth]]
     subgraph "recordersvc @ host.docker.internal"
         RecordTemperature(/set_temperature)
         GetPredicted(/forecast)
@@ -50,12 +59,17 @@ subgraph device
     end
     RecordTemperature --> datastore
 end
+
 subgraph "automation net"
-    thermometer1 & thermometer2 & thermometer3 --> hub(brand-x hub hardware)
+    thermometer1 & thermometer2 --> hub(brand-x hub hardware)
+    thermometer3 & thermometer4 .-> bluetooth
+    wifidevice("wifi device[s]")
 end
 inquire(/gpio_info) 
 
-hub -- /dev/usb* --> hacontainer
+wifidevice -.- wlanb -- ?? can read ?? --> hacontainer
+hub -.- usb -- /dev/usb* --> hacontainer
+bluetooth --> hacontainer
 
 inquire --> GetState 
 ha_timetrigger -- restcommand GET --> GetPredicted
@@ -63,5 +77,5 @@ ha_timetrigger -- restcommand POST --> RecordTemperature
 
 RecordState -->RecordTemperature
 GetPredicted --> ha_webhook
-GetPredicted --> openmeteo --> GetPredicted
+GetPredicted --> eth0 --> Internet --> openmeteo --> GetPredicted
 ```

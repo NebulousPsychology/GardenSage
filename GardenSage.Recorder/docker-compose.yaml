@@ -24,8 +24,6 @@ services:
     build:
       context: ..
       dockerfile: GardenSage.Recorder/Dockerfile
-    # volumes:
-    #   -
   #
   homeassistant:
     container_name: homeassistant
