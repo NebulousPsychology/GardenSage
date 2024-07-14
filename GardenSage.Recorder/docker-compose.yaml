@@ -38,6 +38,9 @@ services:
       #  sudo apt install bluez
       - ./haconfig:/config
       # - /wslbind.txt:/wslbindup.txt:ro # (it does bind correctly on wsl, which confirms docker binds linux-style)
+      - ./ha_configuration.yaml:/config/configuration.yaml
+      - ./ha_automations.yaml:/config/automations.yaml
+      - ./ha_scripts.yaml:/config/scripts.yaml
     privileged: true
     environment:
       - TZ=America/Los_Angeles

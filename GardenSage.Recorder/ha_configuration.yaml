@@ -1,0 +1,23 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# https://www.home-assistant.io/integrations/rest/
+# https://www.home-assistant.io/integrations/rest_command/
+# https://www.home-assistant.io/integrations/sensor.rest/
+# https://www.home-assistant.io/docs/configuration/templating/
+# notify:
+#   - name: sendtempsover
+#     platform: rest
+#     resource: http://localhost:5123
+#     method: GET
+#     data: >
+#       {{ states('sensor.thermometer')}}
