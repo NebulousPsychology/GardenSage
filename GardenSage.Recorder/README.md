@@ -34,6 +34,18 @@ RecordState -->RecordTemperature
 
 ## homeassistant device
 
+```
+bluetoothctl
+
+list
+show
+
+devices
+scan.
+pair
+
+```
+
 - client wlan, can be positioned anywhere
 
 ```mermaid

@@ -10,3 +10,5 @@ Dockerfile*
 **/*.ps1
 **/*.cmd
 **/*.sh
+
+haconfig/

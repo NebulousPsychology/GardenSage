@@ -32,7 +32,12 @@ services:
       # MUST RUN LINUX OR WSL
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus:ro # optional; req for bluetooth
-      # - ./wslconf:/config
+      # https://sequr.be/blog/2022/11/home-assistant-container-part-11-bluetooth-support/#:~:text=To%20then%20get%20Home%20Assistant%20to%20recognize%20your,Assistant%20container%20by%20running%20docker-compose%20up%20-d%20homeassistant.
+      # host: sudo apt install dbus-broker
+      # sudo systemctl enable dbus-broker.service
+      #  sudo apt install bluez
+      - ./haconfig:/config
+      # - /wslbind.txt:/wslbindup.txt:ro # (it does bind correctly on wsl, which confirms docker binds linux-style)
     privileged: true
     environment:
       - TZ=America/Los_Angeles
