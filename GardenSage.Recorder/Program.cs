@@ -36,6 +36,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapGet("/heartbeat", getheartbeat).WithName("GetHeartbeat").WithOpenApi();
 app.MapGet("/weatherforecast", getforecast).WithName("GetWeatherForecast").WithOpenApi();
 // get some info about the gpio
 app.MapGet("/gpio_info", GpioInfo).WithName("GetGpioInfo").WithOpenApi();
@@ -49,6 +50,12 @@ app.Run();
 log.LogInformation("After App Run");
 
 #region API Methods
+static async Task<IResult> getheartbeat(ILogger<Program> log){
+    log.LogInformation(message: "heartbeat");
+    return TypedResults.Ok(new{ foo="bar", at=DateTime.Now });
+
+}
+
 static async Task<IResult> getforecast(ILogger<Program> log)
 {
     log.LogInformation("forecasting");
@@ -80,10 +87,11 @@ static async Task<IResult> GpioInfo(HttpContext context, ILogger<Program> logger
     }
 }
 
-static async Task<IResult> RegisterFacilityState(HttpContext context, FacilityState state, Recorder recorder)
+static async Task<IResult> RegisterFacilityState(HttpContext context, ILogger<Program> logger, FacilityState state, Recorder recorder)
 {
     try
     {
+        logger.LogInformation("RegisterFacilityState");
         recorder.AddFacilityState(state);
         return TypedResults.Ok(new { DateTimeOffset.Now, state });
     }

@@ -1,7 +1,7 @@
 # leverage builtin container support?
 # https://devblogs.microsoft.com/dotnet/announcing-builtin-container-support-for-the-dotnet-sdk/
-dotnet publish -p:PublishProfile=DefaultContainer
-
+dotnet publish -p:PublishProfile=DefaultContainer # creates 'gardensage-recorder:latest'
+docker-compose up
 # how to bundle a docker image and deploy to remote?
 # docker save -o recorder.tar gardensage-recorder:latest
 # scp ...

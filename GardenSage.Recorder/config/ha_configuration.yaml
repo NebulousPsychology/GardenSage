@@ -1,0 +1,67 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# https://www.home-assistant.io/integrations/rest/
+# https://www.home-assistant.io/integrations/rest_command/
+# https://www.home-assistant.io/integrations/sensor.rest/
+# https://www.home-assistant.io/integrations/binary_sensor.rest/
+# https://www.home-assistant.io/integrations/switch.rest/
+# https://www.home-assistant.io/integrations/notify.rest/
+# https://www.home-assistant.io/docs/configuration/templating/
+# notify:
+#   - name: sendtempsover
+#     platform: rest
+#     resource: http://localhost:5123
+#     method: GET
+#     data: >
+#       {{ states('sensor.thermometer')}}
+
+python_script:
+  #enable
+
+# Example configuration.yaml entry
+# sensor:
+#   - platform: rest
+#     name: restsensorforecast
+#     resource: http://localhost:5123/gpio_info
+#     method: GET
+#     # FIXME max length (of response?) "state" is 255 chars
+#     value_template: "{% value|from_json %}"
+
+
+rest_command:
+  get_gardensageforecast:
+    url: http://host.docker.internal:5123/weatherforecast
+    method: GET
+    content_type:  'application/json; charset=utf-8'
+    headers:
+      accept: "application/json, text/html"
+
+  submit_facilitystate:
+    url: http://host.docker.internal:5123/facility_state
+    method: POST
+    headers:
+      # authorization: !secret rest_headers_secret
+      accept: "application/json, text/html"
+      user-agent: 'Mozilla/5.0 {{ useragent }}'
+    payload: >
+      {
+        "AC": false,
+        "Furnace": false,
+        "Vent": false,
+        "profile":{
+          "status_text": "{{ status }}",
+          "status_emoji": "{{ emoji }}"
+        }
+      }
+    content_type:  'application/json; charset=utf-8'
+    # verify_ssl: true

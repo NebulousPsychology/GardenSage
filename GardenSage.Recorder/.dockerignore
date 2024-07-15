@@ -12,3 +12,4 @@ Dockerfile*
 **/*.sh
 
 haconfig/
+ha/

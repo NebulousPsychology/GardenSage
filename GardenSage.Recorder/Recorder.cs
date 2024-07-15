@@ -46,6 +46,6 @@ public class Recorder(ILogger<Recorder> log) //: BackgroundService
     }
     public void AddFacilityState(FacilityState state)
     {
-
+        log.LogInformation("AddFacilityState: {state}", state);
     }
 }

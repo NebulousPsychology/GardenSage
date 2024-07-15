@@ -21,9 +21,11 @@ services:
     #   - /sys/class/gpio:/sys/class/gpio
     #   - /sys:/sys
     image: gardensage-recorder
-    build:
-      context: ..
-      dockerfile: GardenSage.Recorder/Dockerfile
+    # build:
+    #   context: ..
+    #   dockerfile: GardenSage.Recorder/Dockerfile
+    #FIXME something is wrong with dockercompose --build, image differs from `dotnet publish -p:PublishProfile=DefaultContainer` ()
+    # !  Could not load file or assembly 'GardenSage.Recorder ...
   #
   homeassistant:
     container_name: homeassistant
@@ -36,14 +38,17 @@ services:
       # host: sudo apt install dbus-broker
       # sudo systemctl enable dbus-broker.service
       #  sudo apt install bluez
-      - ./haconfig:/config
       # - /wslbind.txt:/wslbindup.txt:ro # (it does bind correctly on wsl, which confirms docker binds linux-style)
-      - ./ha_configuration.yaml:/config/configuration.yaml
-      - ./ha_automations.yaml:/config/automations.yaml
-      - ./ha_scripts.yaml:/config/scripts.yaml
+      - ./ha:/config # bind the config folder out from the 
+      - ./python_scripts:/config/python_scripts:ro
+      #
+      - ./config/ha_configuration.yaml:/config/configuration.yaml
+      - ./config/ha_automations.yaml:/config/automations.yaml
+      - ./config/ha_scripts.yaml:/config/scripts.yaml
+      - ./config/ha_scenes.yaml:/config/scenes.yaml
     privileged: true
     environment:
       - TZ=America/Los_Angeles
     ports:
       - 8123:8123
-    # host.docker.internal:8123
+    # http://host.docker.internal:8123
