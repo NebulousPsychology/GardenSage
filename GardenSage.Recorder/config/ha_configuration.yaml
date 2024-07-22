@@ -34,7 +34,7 @@ python_script:
 #     name: restsensorforecast
 #     resource: http://localhost:5123/gpio_info
 #     method: GET
-#     # FIXME max length (of response?) "state" is 255 chars
+#     #! FIXME max length (of response?) "state" is 255 chars
 #     value_template: "{% value|from_json %}"
 
 

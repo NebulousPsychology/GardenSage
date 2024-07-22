@@ -42,7 +42,7 @@ public class ThermostatService
     {
         var filtered = data
             .Zip(data.Skip(1),
-                (prevPair, cur) => new { Current = cur, Previous = prevPair })
+                resultSelector: (prevPair, cur) => new { Current = cur, Previous = prevPair })
             .Where(pair => condition(previous: pair.Previous, current: pair.Current))
             .Select(pair => pair.Current)
             ;

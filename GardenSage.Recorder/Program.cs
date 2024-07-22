@@ -22,6 +22,7 @@ logger.Info("service building");
 logger.Info(builder.Configuration.GetDebugView());
 
 builder.Services.AddScoped<Recorder>();
+// TODO: add other gardensage services
 var app = builder.Build();
 
 var log = app.Services.GetRequiredService<ILogger<Program>>();
@@ -42,6 +43,8 @@ app.MapGet("/weatherforecast", getforecast).WithName("GetWeatherForecast").WithO
 app.MapGet("/gpio_info", GpioInfo).WithName("GetGpioInfo").WithOpenApi();
 // manually add a state change
 app.MapPost("/facility_state", handler: RegisterFacilityState).WithName("NewFacilityState").WithOpenApi();
+// receive a bundle of sensor data
+app.MapPost("/submit_temperature", handler: SubmitTemperature).WithName("NewThermSubmissionEvent").WithOpenApi();
 // regularly sense temperature pair
 app.MapPost("/sense_temperature", handler: SenseTemperature).WithName("NewSensorEvent").WithOpenApi();
 
@@ -101,6 +104,10 @@ static async Task<IResult> RegisterFacilityState(HttpContext context, ILogger<Pr
     }
 }
 
+static async Task<IResult> SubmitTemperature(HttpContext context, TemperatureSensorGroup data){
+        return TypedResults.Ok();
+}
+
 static async Task<IResult> SenseTemperature(HttpContext context, Recorder recorder)
 {
     if (Recorder.HasSensorHardware)
@@ -118,6 +125,9 @@ static async Task<IResult> SenseTemperature(HttpContext context, Recorder record
 #region Model records
 namespace GardenSage.Recorder
 {
+    public record TemperatureSensorGroup(DateTimeOffset Time, double[] Indoor, double Outdoor){
+        //
+    }
     public record TemperatureDifference(DateTimeOffset Time, double Indoor, double Outdoor)
     {
     }

@@ -92,7 +92,7 @@ GetPredicted --> ha_webhook
 eth0 --> Internet --> openmeteo --> GetPredicted
 ```
 
-## homeassistant peer
+## homeassistant containerized
 
 - wired internet ()
 - broadcast AP for smarthome-only traffic from devices
@@ -103,6 +103,8 @@ graph TB
 openmeteo
 
 subgraph device
+    cronjob -- curl --> ha_webhook 
+    cronjob --> ha_timetrigger
     usb[[con:usb]]
     eth0[[con:eth0]]
     wlanb[[con:wlan-broadcast]]
