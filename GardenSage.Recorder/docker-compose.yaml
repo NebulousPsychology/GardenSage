@@ -49,6 +49,7 @@ services:
     privileged: true
     environment:
       - TZ=America/Los_Angeles
+      - DOCKERHOSTDOMAIN=172.17.0.1 # for linux
     ports:
       - 8123:8123
     # http://host.docker.internal:8123

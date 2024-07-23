@@ -9,6 +9,8 @@ frontend:
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
+# https://www.home-assistant.io/docs/configuration/yaml/#environment-variables
+# https://community.home-assistant.io/t/how-to-concatenate-strings-with-variables-in-config-template-card-template/406774/3
 
 # https://www.home-assistant.io/integrations/rest/
 # https://www.home-assistant.io/integrations/rest_command/
@@ -36,11 +38,12 @@ python_script:
 #     method: GET
 #     #! FIXME max length (of response?) "state" is 255 chars
 #     value_template: "{% value|from_json %}"
-
+# myhostdomain: !env_var DOCKERHOSTDOMAIN host.docker.internal:5123
 
 rest_command:
   get_gardensageforecast:
-    url: http://host.docker.internal:5123/weatherforecast
+    # url: http://host.docker.internal:5123/weatherforecast
+    url: "{{ env_var('DOCKERHOSTDOMAIN')|default('host.docker.internal') }}:5123/weatherforecast"
     method: GET
     content_type:  'application/json; charset=utf-8'
     headers:
