@@ -27,6 +27,22 @@ services:
     #FIXME something is wrong with dockercompose --build, image differs from `dotnet publish -p:PublishProfile=DefaultContainer` ()
     # !  Could not load file or assembly 'GardenSage.Recorder ...
   #
+
+  # netdaemon4: 
+  #   image: netdaemon/netdaemon4                 # use netdaemon/netdaemon4:ver for specific version
+  #   container_name: netdaemon4
+  #   restart: always
+  #   environment:
+  #     - HomeAssistant__Host=host.docker.internal # use host.docker.internal if HA in container (see section below)
+  #     - HomeAssistant__Token=your_token
+  #     - NetDaemon__ApplicationAssembly=NetDaemonApps.dll
+  #     - Logging__LogLevel__Default=Information  # use Information/Debug/Trace/Warning/Error
+  #     - TZ=Etc/UTC                              # Set your current timezone
+  #   volumes:
+  #     - /config/netdaemon:/data                 # TODO: replace /config/netdaemon to your local folder
+  #   extra_hosts:                              # Enable if HA in 
+  #       - "host.docker.internal:host-gateway" # container
+
   homeassistant:
     container_name: homeassistant
     image: ghcr.io/home-assistant/home-assistant:stable

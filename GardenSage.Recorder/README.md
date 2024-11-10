@@ -141,3 +141,8 @@ RecordState -->RecordTemperature
 GetPredicted --> ha_webhook
 GetPredicted --> eth0 --> Internet --> openmeteo --> GetPredicted
 ```
+
+## NetDaemon
+
+- docker setup: <https://netdaemon.xyz/docs/user/started/installation/#install-as-a-docker-container>
+- 
